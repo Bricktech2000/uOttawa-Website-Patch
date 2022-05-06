@@ -35,7 +35,8 @@ app.use('/', (clientRequest, clientResponse) => {
       clientResponse.writeHead(serverResponse.statusCode, {
         ...serverResponse.headers,
         location: `http://${
-          clientRequest.headers.host
+          // clientRequest.headers.host
+          'uottawa.emilien.ca'
         }${serverResponse.headers.location.replace(url, '')}`,
       });
       clientResponse.end();
@@ -52,7 +53,8 @@ app.use('/', (clientRequest, clientResponse) => {
         for (var patch of patches)
           body = patch.default(body, {
             domain: url,
-            host: clientRequest.headers.host,
+            // host: clientRequest.headers.host,
+            host: 'uottawa.emilien.ca',
             path: clientRequest.path,
           });
 
