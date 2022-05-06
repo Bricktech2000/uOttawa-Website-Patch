@@ -1,6 +1,7 @@
 import express from 'express';
 import https from 'https';
 import http from 'http';
+import patches from './patches/patches.js';
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -33,10 +34,9 @@ app.use('/', (clientRequest, clientResponse) => {
     if (serverResponse.statusCode >= 300 && serverResponse.statusCode <= 305) {
       clientResponse.writeHead(serverResponse.statusCode, {
         ...serverResponse.headers,
-        location: `http://localhost:${port}${serverResponse.headers.location.replace(
-          url,
-          ''
-        )}`,
+        location: `http://${
+          clientRequest.headers.host
+        }${serverResponse.headers.location.replace(url, '')}`,
       });
       clientResponse.end();
     } else if (
@@ -49,17 +49,12 @@ app.use('/', (clientRequest, clientResponse) => {
       });
 
       serverResponse.on('end', () => {
-        // Make changes to HTML files when they're done being read.
-        body = body.replace(/<a(.*?) href="(.*?)"(.*?)>/g, (a, b, c, d) => {
-          if (c.startsWith(url)) {
-            return `<a${b} href="http://localhost:${port}${c.replace(
-              url,
-              ''
-            )}"${d}>`;
-          } else {
-            return `<a${b} href="${c}"${d}>`;
-          }
-        });
+        for (var patch of patches)
+          body = patch.default(body, {
+            domain: url,
+            host: clientRequest.headers.host,
+            path: clientRequest.path,
+          });
 
         clientResponse.writeHead(
           serverResponse.statusCode,
