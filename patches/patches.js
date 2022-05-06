@@ -3,6 +3,7 @@
 
 export default [
   await import('./linkProxyRedirect.js'),
+  await import('./addPatchTitle.js'),
   await import('./deleteCovidBanner.js'),
   await import('./makeContainersFullWidth.js'),
   await import('./usableMobileCourseSequenceTable.js'),
