@@ -5,17 +5,26 @@ import patches from './patches/patches.js';
 const app = express();
 
 const port = process.env.PORT || 3000;
-const url = process.env.URL || 'https://www2.uottawa.ca';
+const clientRequestHeadersHost = 'uottawa.emilien.ca';
+const requestUrl = process.env.REQUEST_URL || 'https://www2.uottawa.ca';
+const alternativeUrls = process.env.ALTERNATIVE_URLS
+  ? JSON.parse(process.env.ALTERNATIVE_URLS)
+  : [
+      'https://www2.uottawa.ca',
+      'https://www.uottawa.ca',
+      'http://www2.uottawa.ca',
+      'http://www.uottawa.ca',
+    ];
 
 app.use('/', (clientRequest, clientResponse) => {
-  const parsedHost = url.split('/').splice(2).splice(0, 1).join('/');
+  const parsedHost = requestUrl.split('/').splice(2).splice(0, 1).join('/');
   var parsedPort;
   var parsedSSL;
 
-  if (url.startsWith('https://')) {
+  if (requestUrl.startsWith('https://')) {
     parsedPort = 443;
     parsedSSL = https;
-  } else if (url.startsWith('http://')) {
+  } else if (requestUrl.startsWith('http://')) {
     parsedPort = 80;
     parsedSSL = http;
   }
@@ -35,9 +44,11 @@ app.use('/', (clientRequest, clientResponse) => {
       clientResponse.writeHead(serverResponse.statusCode, {
         ...serverResponse.headers,
         location: `http://${
-          // clientRequest.headers.host
-          'uottawa.emilien.ca'
-        }${serverResponse.headers.location.replace(url, '')}`,
+          clientRequestHeadersHost || clientRequest.headers.host
+        }${alternativeUrls.reduce(
+          (acc, cur) => acc.replace(cur, ''),
+          serverResponse.headers.location
+        )}`,
       });
       clientResponse.end();
     } else if (
@@ -52,9 +63,8 @@ app.use('/', (clientRequest, clientResponse) => {
       serverResponse.on('end', () => {
         for (var patch of patches)
           body = patch.default(body, {
-            domain: url,
-            // host: clientRequest.headers.host,
-            host: 'uottawa.emilien.ca',
+            domain: requestUrl,
+            host: clientRequestHeadersHost || clientRequest.headers.host,
             path: clientRequest.path,
           });
 
