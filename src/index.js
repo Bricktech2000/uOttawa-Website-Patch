@@ -5,8 +5,7 @@ import patches from './patches/patches.js';
 const app = express();
 
 const port = process.env.PORT || 3000;
-// const clientRequestHeadersHost = 'uottawa.emilien.ca';
-const clientRequestHeadersHost = null;
+const clientRequestHeadersHost = 'uottawa.emilien.ca';
 const requestUrl = process.env.REQUEST_URL || 'https://www2.uottawa.ca';
 const alternativeUrls = process.env.ALTERNATIVE_URLS
   ? JSON.parse(process.env.ALTERNATIVE_URLS)
