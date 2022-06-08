@@ -5,6 +5,7 @@ const patches = [
   './linkProxyRedirect.js',
   './addPatchTitle.js',
   './deleteCovidBanner.js',
+  './deleteCookieConsent.js',
   './makeContainersFullWidth.js',
   './usableMobileCourseSequenceTable.js',
   './decreaseHeadingFontSize.js',
