@@ -64,6 +64,7 @@ app.use('/', (clientRequest, clientResponse) => {
         for (var patch of patches)
           body = patch(body, {
             domain: requestUrl,
+            domains: alternativeUrls,
             host: clientRequestHeadersHost || clientRequest.headers.host,
             path: clientRequest.path,
           });
