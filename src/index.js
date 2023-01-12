@@ -18,8 +18,8 @@ const alternativeUrls = process.env.ALTERNATIVE_URLS
 
 app.use('/', (clientRequest, clientResponse) => {
   const parsedHost = requestUrl.split('/').splice(2).splice(0, 1).join('/');
-  var parsedPort;
-  var parsedSSL;
+  let parsedPort;
+  let parsedSSL;
 
   if (requestUrl.startsWith('https://')) {
     parsedPort = 443;
@@ -54,14 +54,14 @@ app.use('/', (clientRequest, clientResponse) => {
     } else if (
       String(serverResponse.headers['content-type']).indexOf('text/html') !== -1
     ) {
-      var body = '';
+      let body = '';
 
       serverResponse.on('data', (chunk) => {
         body += chunk;
       });
 
       serverResponse.on('end', () => {
-        for (var patch of patches)
+        for (let patch of patches)
           body = patch(body, {
             domain: requestUrl,
             domains: alternativeUrls,
