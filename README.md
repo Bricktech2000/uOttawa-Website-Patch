@@ -1,5 +1,5 @@
 # uOttawa Website Patch
 
-A proxy server for patching the new uOttawa website
+_A proxy server for patching the new uOttawa website_
 
 Currently live at <https://uottawa.emilien.ca/>.
